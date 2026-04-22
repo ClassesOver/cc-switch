@@ -18,11 +18,24 @@ flatpak install -y --user flathub org.gnome.Platform//46 org.gnome.Sdk//46
 
 ## Local Build (Generate .flatpak from .deb)
 
-1) Build the deb on Linux first:
+1) Build the deb on Linux first.
+
+For the same compatibility target as the official release artifacts (`Ubuntu 20.04`, `glibc 2.31+`), build it inside an Ubuntu 20.04 container:
 
 ```bash
-pnpm tauri build -- --bundles deb
+docker run --rm \
+  -v "$PWD:/work" \
+  -w /work \
+  ubuntu:20.04 \
+  bash -lc '
+    bash scripts/setup-linux-compat-env.sh
+    export PATH="${CARGO_HOME:-$HOME/.cargo}/bin:$PATH"
+    pnpm install --frozen-lockfile
+    pnpm tauri build --bundles deb
+  '
 ```
+
+If you build directly on a newer Linux host instead, the resulting `.deb` may require that host's newer `glibc`.
 
 2) Copy the generated deb to this directory:
 

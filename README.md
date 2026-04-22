@@ -268,7 +268,7 @@ For detailed guides on every feature, check out the **[User Manual](docs/user-ma
 
 - **Windows**: Windows 10 and above
 - **macOS**: macOS 12 (Monterey) and above
-- **Linux**: Ubuntu 22.04+ / Debian 11+ / Fedora 34+ and other mainstream distributions
+- **Linux**: Ubuntu 20.04+ with `glibc 2.31+`
 
 ### Windows Users
 
@@ -295,21 +295,16 @@ Download `CC-Switch-v{version}-macOS.dmg` (recommended) or `.zip` from the [Rele
 
 > **Note**: CC Switch for macOS is code-signed and notarized by Apple. You can install and open it directly.
 
-### Arch Linux Users
-
-**Install via paru (Recommended)**
-
-```bash
-paru -S cc-switch-bin
-```
-
 ### Linux Users
 
-Download the latest Linux build from the [Releases](../../releases) page:
+Download the latest Ubuntu 20.04 build from the [Releases](../../releases) page:
 
-- `CC-Switch-v{version}-Linux.deb` (Debian/Ubuntu)
-- `CC-Switch-v{version}-Linux.rpm` (Fedora/RHEL/openSUSE)
-- `CC-Switch-v{version}-Linux.AppImage` (Universal)
+- `CC-Switch-v{version}-Linux-x86_64.deb`
+- `CC-Switch-v{version}-Linux-arm64.deb`
+
+> **Compatibility**: Official Linux distribution only targets Ubuntu 20.04 and `glibc 2.31+`.
+
+> **Updater**: The Linux AppImage artifact is retained only for the built-in auto-updater. Manual installation is recommended via `.deb`.
 
 > **Flatpak**: Not included in official releases. You can build it yourself from the `.deb` — see [`flatpak/README.md`](flatpak/README.md) for instructions.
 

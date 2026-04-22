@@ -54,46 +54,27 @@ jobs:
         run: pnpm test:unit
 
   backend:
-    name: Backend Checks
+    name: Backend Checks (Ubuntu 20.04 Compat)
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt, clippy
-
-      - name: Install Linux system deps
+      - name: Run backend checks in Ubuntu 20.04
+        shell: bash
         run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            build-essential pkg-config libssl-dev \
-            libgtk-3-dev librsvg2-dev libayatana-appindicator3-dev
-          sudo apt-get install -y --no-install-recommends libwebkit2gtk-4.1-dev \
-            || sudo apt-get install -y --no-install-recommends libwebkit2gtk-4.0-dev
-          sudo apt-get install -y --no-install-recommends libsoup-3.0-dev \
-            || sudo apt-get install -y --no-install-recommends libsoup2.4-dev
-
-      - name: Cache Cargo registry and build
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            src-tauri/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('src-tauri/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-
-
-      - name: Create frontend dist placeholder
-        run: mkdir -p dist
-
-      - name: Check Rust formatting
-        run: cargo fmt --check --manifest-path src-tauri/Cargo.toml
-
-      - name: Clippy
-        run: cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings
-
-      - name: Run tests
-        run: cargo test --manifest-path src-tauri/Cargo.toml
+          set -euxo pipefail
+          docker run --rm \
+            -v "$PWD:/work" \
+            -w /work \
+            -e CC_SWITCH_SKIP_NODE=1 \
+            -e CC_SWITCH_RUST_COMPONENTS="rustfmt clippy" \
+            ubuntu:20.04 \
+            bash -lc '
+              bash scripts/setup-linux-compat-env.sh
+              export PATH="${CARGO_HOME:-$HOME/.cargo}/bin:$PATH"
+              mkdir -p dist
+              cargo fmt --check --manifest-path src-tauri/Cargo.toml
+              cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings
+              cargo test --manifest-path src-tauri/Cargo.toml
+            '

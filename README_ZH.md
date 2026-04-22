@@ -269,7 +269,7 @@ CC Switch macOS 版本已通过 Apple 代码签名和公证，可直接下载安
 
 - **Windows**：Windows 10 及以上
 - **macOS**：macOS 12 (Monterey) 及以上
-- **Linux**：Ubuntu 22.04+ / Debian 11+ / Fedora 34+ 等主流发行版
+- **Linux**：Ubuntu 20.04+（`glibc 2.31+`）
 
 ### Windows 用户
 
@@ -296,21 +296,16 @@ brew upgrade --cask cc-switch
 
 > **注意**：CC Switch macOS 版本已通过 Apple 代码签名和公证，可直接安装打开。
 
-### Arch Linux 用户
-
-**通过 paru 安装（推荐）**
-
-```bash
-paru -S cc-switch-bin
-```
-
 ### Linux 用户
 
-从 [Releases](../../releases) 页面下载最新版本的 Linux 安装包：
+从 [Releases](../../releases) 页面下载最新版 Ubuntu 20.04 安装包：
 
-- `CC-Switch-v{版本号}-Linux.deb`（Debian/Ubuntu）
-- `CC-Switch-v{版本号}-Linux.rpm`（Fedora/RHEL/openSUSE）
-- `CC-Switch-v{版本号}-Linux.AppImage`（通用）
+- `CC-Switch-v{版本号}-Linux-x86_64.deb`
+- `CC-Switch-v{版本号}-Linux-arm64.deb`
+
+> **兼容性**：官方 Linux 分发仅面向 Ubuntu 20.04，目标为 `glibc 2.31+`。
+
+> **自动更新**：Linux 的 AppImage 产物仅用于内置自动更新，手动安装请优先使用 `.deb`。
 
 > **Flatpak**：官方 Release 不包含 Flatpak 包。如需使用，可从 `.deb` 自行构建 — 参见 [`flatpak/README.md`](flatpak/README.md)。
 
