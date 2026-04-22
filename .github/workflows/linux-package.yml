@@ -1,0 +1,77 @@
+name: Linux Package
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+concurrency:
+  group: linux-package-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-linux:
+    name: Ubuntu 20.04 Package (${{ matrix.arch }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            arch: x86_64
+          - os: ubuntu-22.04-arm
+            arch: arm64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Ubuntu 20.04 package
+        shell: bash
+        run: |
+          set -euxo pipefail
+          docker run --rm \
+            -v "$PWD:/work" \
+            -w /work \
+            -e CI=true \
+            -e HOST_UID="$(id -u)" \
+            -e HOST_GID="$(id -g)" \
+            ubuntu:20.04 \
+            bash -lc '
+              bash scripts/setup-linux-compat-env.sh
+              export PATH="${CARGO_HOME:-$HOME/.cargo}/bin:$PATH"
+              cat > /tmp/tauri-ci-linux-package.json <<'"'"'EOF'"'"'
+              {
+                "$schema": "https://schema.tauri.app/config/2",
+                "bundle": {
+                  "createUpdaterArtifacts": false
+                }
+              }
+              EOF
+              pnpm install --frozen-lockfile
+              pnpm tauri build --config /tmp/tauri-ci-linux-package.json --bundles deb
+              chown -R "$HOST_UID:$HOST_GID" /work/src-tauri/target /work/node_modules
+            '
+
+      - name: Prepare package artifact
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p workflow-artifacts
+          REF_SLUG="${GITHUB_REF_NAME//\//-}"
+          SHORT_SHA="${GITHUB_SHA::7}"
+          ARCH="${{ matrix.arch }}"
+          DEB=$(find src-tauri/target/release/bundle -name "*.deb" | head -1 || true)
+          if [ -z "$DEB" ]; then
+            echo "No .deb package found under src-tauri/target/release/bundle" >&2
+            exit 1
+          fi
+          cp "$DEB" "workflow-artifacts/CC-Switch-${REF_SLUG}-${SHORT_SHA}-Ubuntu20.04-${ARCH}.deb"
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ubuntu20.04-package-${{ matrix.arch }}
+          path: workflow-artifacts/*
+          if-no-files-found: error
+          retention-days: 14
