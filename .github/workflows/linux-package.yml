@@ -30,10 +30,13 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
-          mkdir -p workflow-artifacts
           REF_SLUG="${GITHUB_REF_NAME//\//-}"
           SHORT_SHA="${GITHUB_SHA::7}"
-          docker run --rm \
+          CONTAINER_NAME="cc-switch-linux-package-${{ matrix.arch }}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          echo "CONTAINER_NAME=$CONTAINER_NAME" >> "$GITHUB_ENV"
+          docker rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
+          docker run \
+            --name "$CONTAINER_NAME" \
             -v "$PWD:/work" \
             -w /work \
             -e CI=true \
@@ -63,10 +66,18 @@ jobs:
                 find /work/src-tauri/target -maxdepth 5 -type f | sort || true
                 exit 1
               fi
-              cp "$DEB" "/work/workflow-artifacts/CC-Switch-${REF_SLUG}-${SHORT_SHA}-Ubuntu20.04-${ARCH}.deb"
+              mkdir -p /tmp/package-output
+              cp "$DEB" "/tmp/package-output/CC-Switch-${REF_SLUG}-${SHORT_SHA}-Ubuntu20.04-${ARCH}.deb"
               chown -R "$HOST_UID:$HOST_GID" /work/src-tauri/target /work/node_modules
-              chown -R "$HOST_UID:$HOST_GID" /work/workflow-artifacts
             '
+
+      - name: Prepare package artifact
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p workflow-artifacts
+          docker cp "$CONTAINER_NAME:/tmp/package-output/." workflow-artifacts
+          find workflow-artifacts -maxdepth 1 -type f -name "*.deb" | sort
 
       - name: Upload package artifact
         uses: actions/upload-artifact@v7
@@ -75,3 +86,8 @@ jobs:
           path: workflow-artifacts/*
           if-no-files-found: error
           retention-days: 14
+
+      - name: Clean up container
+        if: always()
+        shell: bash
+        run: docker rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
