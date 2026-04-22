@@ -61,9 +61,10 @@ jobs:
           REF_SLUG="${GITHUB_REF_NAME//\//-}"
           SHORT_SHA="${GITHUB_SHA::7}"
           ARCH="${{ matrix.arch }}"
-          DEB=$(find src-tauri/target/release/bundle -name "*.deb" | head -1 || true)
+          DEB=$(find src-tauri/target -name "*.deb" | head -1 || true)
           if [ -z "$DEB" ]; then
-            echo "No .deb package found under src-tauri/target/release/bundle" >&2
+            echo "No .deb package found under src-tauri/target" >&2
+            find src-tauri/target -maxdepth 5 -type d | sort || true
             exit 1
           fi
           cp "$DEB" "workflow-artifacts/CC-Switch-${REF_SLUG}-${SHORT_SHA}-Ubuntu20.04-${ARCH}.deb"
