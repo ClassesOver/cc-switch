@@ -269,7 +269,7 @@ CC Switch macOS 版本已通过 Apple 代码签名和公证，可直接下载安
 
 - **Windows**：Windows 10 及以上
 - **macOS**：macOS 12 (Monterey) 及以上
-- **Linux**：Ubuntu 20.04+（`glibc 2.31+`）
+- **Linux**：Ubuntu 20.04 x64（`glibc 2.31`）
 
 ### Windows 用户
 
@@ -298,12 +298,11 @@ brew upgrade --cask cc-switch
 
 ### Linux 用户
 
-从 [Releases](../../releases) 页面下载最新版 Ubuntu 20.04 安装包：
+从 [Releases](../../releases) 页面下载最新版 Ubuntu 20.04 x64 安装包：
 
-- `CC-Switch-v{版本号}-Linux-x86_64.deb`
-- `CC-Switch-v{版本号}-Linux-arm64.deb`
+- `CC-Switch-v{版本号}-Linux-Ubuntu20.04-glibc2.31-x64.deb`
 
-> **兼容性**：官方 Linux 分发仅面向 Ubuntu 20.04，目标为 `glibc 2.31+`。
+> **兼容性**：官方 Linux 分发仅面向 Ubuntu 20.04 x64，目标为 `glibc 2.31`。
 
 > **自动更新**：Linux 的 AppImage 产物仅用于内置自动更新，手动安装请优先使用 `.deb`。
 
@@ -392,10 +391,10 @@ pnpm build
 # 构建调试版本
 pnpm tauri build --debug
 
-# 构建官方 Ubuntu 20.04 兼容的 Linux 分发产物（.deb + AppImage）
+# 构建官方 Ubuntu 20.04 glibc 2.31 x64 Linux 分发产物（.deb + AppImage）
 pnpm build:linux:ubuntu20
 
-# 仅构建 Ubuntu 20.04 兼容的 .deb 安装包
+# 仅构建 Ubuntu 20.04 glibc 2.31 x64 .deb 安装包
 pnpm build:linux:ubuntu20:deb
 ```
 

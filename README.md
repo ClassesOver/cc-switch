@@ -268,7 +268,7 @@ For detailed guides on every feature, check out the **[User Manual](docs/user-ma
 
 - **Windows**: Windows 10 and above
 - **macOS**: macOS 12 (Monterey) and above
-- **Linux**: Ubuntu 20.04+ with `glibc 2.31+`
+- **Linux**: Ubuntu 20.04 x64 with `glibc 2.31`
 
 ### Windows Users
 
@@ -297,12 +297,11 @@ Download `CC-Switch-v{version}-macOS.dmg` (recommended) or `.zip` from the [Rele
 
 ### Linux Users
 
-Download the latest Ubuntu 20.04 build from the [Releases](../../releases) page:
+Download the latest Ubuntu 20.04 x64 build from the [Releases](../../releases) page:
 
-- `CC-Switch-v{version}-Linux-x86_64.deb`
-- `CC-Switch-v{version}-Linux-arm64.deb`
+- `CC-Switch-v{version}-Linux-Ubuntu20.04-glibc2.31-x64.deb`
 
-> **Compatibility**: Official Linux distribution only targets Ubuntu 20.04 and `glibc 2.31+`.
+> **Compatibility**: Official Linux distribution only targets Ubuntu 20.04 x64 with `glibc 2.31`.
 
 > **Updater**: The Linux AppImage artifact is retained only for the built-in auto-updater. Manual installation is recommended via `.deb`.
 
@@ -391,10 +390,10 @@ pnpm build
 # Build debug version
 pnpm tauri build --debug
 
-# Build official Ubuntu 20.04-compatible Linux distribution artifacts (.deb + AppImage)
+# Build official Ubuntu 20.04 glibc 2.31 x64 Linux distribution artifacts (.deb + AppImage)
 pnpm build:linux:ubuntu20
 
-# Build only the Ubuntu 20.04-compatible .deb package
+# Build only the Ubuntu 20.04 glibc 2.31 x64 .deb package
 pnpm build:linux:ubuntu20:deb
 ```
 

@@ -11,16 +11,8 @@ concurrency:
 
 jobs:
   build-linux:
-    name: Ubuntu 20.04 Package (${{ matrix.arch }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: ubuntu-22.04
-            arch: x86_64
-          - os: ubuntu-22.04-arm
-            arch: arm64
+    name: Ubuntu 20.04 glibc 2.31 x64 Package
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout
@@ -33,7 +25,8 @@ jobs:
           mkdir -p workflow-artifacts
           REF_SLUG="${GITHUB_REF_NAME//\//-}"
           SHORT_SHA="${GITHUB_SHA::7}"
-          OUTPUT_FILE="workflow-artifacts/CC-Switch-${REF_SLUG}-${SHORT_SHA}-Ubuntu20.04-${{ matrix.arch }}.deb"
+          ARCH="x64"
+          OUTPUT_FILE="workflow-artifacts/CC-Switch-${REF_SLUG}-${SHORT_SHA}-Ubuntu20.04-glibc2.31-${ARCH}.deb"
           docker run --rm \
             -v "$PWD:/work" \
             -v "$PWD/workflow-artifacts:/artifacts" \
@@ -43,10 +36,11 @@ jobs:
             -e HOST_GID="$(id -g)" \
             -e REF_SLUG="$REF_SLUG" \
             -e SHORT_SHA="$SHORT_SHA" \
-            -e ARCH="${{ matrix.arch }}" \
+            -e ARCH="$ARCH" \
             ubuntu:20.04 \
             bash -lc '
               set -euxo pipefail
+              test "$(uname -m)" = "x86_64"
               bash scripts/setup-linux-compat-env.sh >&2
               export PATH="${CARGO_HOME:-$HOME/.cargo}/bin:$PATH"
               printf "%s\n" \
@@ -67,8 +61,8 @@ jobs:
               fi
               echo "Resolved package: $DEB" >&2
               ls -lh "$DEB" >&2
-              cp "$DEB" "/artifacts/CC-Switch-${REF_SLUG}-${SHORT_SHA}-Ubuntu20.04-${ARCH}.deb"
-              test -s "/artifacts/CC-Switch-${REF_SLUG}-${SHORT_SHA}-Ubuntu20.04-${ARCH}.deb"
+              cp "$DEB" "/artifacts/CC-Switch-${REF_SLUG}-${SHORT_SHA}-Ubuntu20.04-glibc2.31-${ARCH}.deb"
+              test -s "/artifacts/CC-Switch-${REF_SLUG}-${SHORT_SHA}-Ubuntu20.04-glibc2.31-${ARCH}.deb"
               ls -lh /artifacts >&2
               for path in /work/src-tauri/target /work/node_modules; do
                 if [ -e "$path" ]; then
@@ -82,7 +76,7 @@ jobs:
       - name: Upload package artifact
         uses: actions/upload-artifact@v7
         with:
-          name: ubuntu20.04-package-${{ matrix.arch }}
+          name: ubuntu20.04-glibc2.31-x64-package
           path: workflow-artifacts/*
           if-no-files-found: error
           retention-days: 14

@@ -55,7 +55,7 @@ jobs:
         run: pnpm test:unit
 
   backend:
-    name: Backend Checks (Ubuntu 20.04 Compat)
+    name: Backend Checks (Ubuntu 20.04 glibc 2.31 x64)
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -73,6 +73,7 @@ jobs:
             ubuntu:20.04 \
             bash -lc '
               set -euxo pipefail
+              test "$(uname -m)" = "x86_64"
               bash scripts/setup-linux-compat-env.sh
               export PATH="${CARGO_HOME:-$HOME/.cargo}/bin:$PATH"
               mkdir -p dist

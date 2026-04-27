@@ -20,6 +20,7 @@ docker run --rm \
   ubuntu:20.04 \
   bash -lc '
     set -euxo pipefail
+    test "$(uname -m)" = "x86_64"
     bash scripts/setup-linux-compat-env.sh
     export PATH="${CARGO_HOME:-$HOME/.cargo}/bin:$PATH"
     pnpm install --frozen-lockfile
