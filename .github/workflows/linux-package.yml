@@ -49,14 +49,13 @@ jobs:
               set -euxo pipefail
               bash scripts/setup-linux-compat-env.sh >&2
               export PATH="${CARGO_HOME:-$HOME/.cargo}/bin:$PATH"
-              cat > /tmp/tauri-ci-linux-package.json <<'"'"'EOF'"'"'
-              {
-                "$schema": "https://schema.tauri.app/config/2",
-                "bundle": {
-                  "createUpdaterArtifacts": false
-                }
-              }
-              EOF
+              printf "%s\n" \
+                "{" \
+                "  \"\$schema\": \"https://schema.tauri.app/config/2\"," \
+                "  \"bundle\": {" \
+                "    \"createUpdaterArtifacts\": false" \
+                "  }" \
+                "}" > /tmp/tauri-ci-linux-package.json
               pnpm install --frozen-lockfile >&2
               pnpm tauri build --config /tmp/tauri-ci-linux-package.json --bundles deb >&2
               DEB=$(find /work/src-tauri/target -name "*.deb" | head -1 || true)
