@@ -42,6 +42,7 @@ apt_retry apt-get install -y --no-install-recommends -o Acquire::Retries=3 -o Ac
   patchelf \
   rpm \
   xdg-utils \
+  libglib2.0-dev \
   libssl-dev \
   libxdo-dev \
   libgtk-3-dev \
