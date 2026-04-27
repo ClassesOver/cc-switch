@@ -390,6 +390,12 @@ pnpm build
 
 # Build debug version
 pnpm tauri build --debug
+
+# Build official Ubuntu 20.04-compatible Linux distribution artifacts (.deb + AppImage)
+pnpm build:linux:ubuntu20
+
+# Build only the Ubuntu 20.04-compatible .deb package
+pnpm build:linux:ubuntu20:deb
 ```
 
 ### Rust Backend Development

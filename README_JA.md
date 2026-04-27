@@ -392,6 +392,12 @@ pnpm build
 
 # デバッグビルド
 pnpm tauri build --debug
+
+# Ubuntu 20.04 互換の公式 Linux 配布物（.deb + AppImage）をビルド
+pnpm build:linux:ubuntu20
+
+# Ubuntu 20.04 互換の .deb パッケージのみビルド
+pnpm build:linux:ubuntu20:deb
 ```
 
 ### Rust バックエンド開発

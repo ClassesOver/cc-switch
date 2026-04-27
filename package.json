@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "pnpm tauri dev",
     "build": "pnpm tauri build",
+    "build:linux:ubuntu20": "bash scripts/build-linux-ubuntu20.sh",
+    "build:linux:ubuntu20:deb": "bash scripts/build-linux-ubuntu20.sh deb",
     "tauri": "tauri",
     "dev:renderer": "vite",
     "build:renderer": "vite build",

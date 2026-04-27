@@ -391,6 +391,12 @@ pnpm build
 
 # 构建调试版本
 pnpm tauri build --debug
+
+# 构建官方 Ubuntu 20.04 兼容的 Linux 分发产物（.deb + AppImage）
+pnpm build:linux:ubuntu20
+
+# 仅构建 Ubuntu 20.04 兼容的 .deb 安装包
+pnpm build:linux:ubuntu20:deb
 ```
 
 ### Rust 后端开发
