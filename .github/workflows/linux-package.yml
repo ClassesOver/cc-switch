@@ -46,6 +46,7 @@ jobs:
             -e ARCH="${{ matrix.arch }}" \
             ubuntu:20.04 \
             bash -lc '
+              set -euxo pipefail
               bash scripts/setup-linux-compat-env.sh >&2
               export PATH="${CARGO_HOME:-$HOME/.cargo}/bin:$PATH"
               cat > /tmp/tauri-ci-linux-package.json <<'"'"'EOF'"'"'

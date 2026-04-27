@@ -19,6 +19,7 @@ docker run --rm \
   -e CC_SWITCH_BUNDLES="$BUNDLES" \
   ubuntu:20.04 \
   bash -lc '
+    set -euxo pipefail
     bash scripts/setup-linux-compat-env.sh
     export PATH="${CARGO_HOME:-$HOME/.cargo}/bin:$PATH"
     pnpm install --frozen-lockfile

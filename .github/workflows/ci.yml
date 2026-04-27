@@ -72,6 +72,7 @@ jobs:
             -e CC_SWITCH_RUST_COMPONENTS="rustfmt clippy" \
             ubuntu:20.04 \
             bash -lc '
+              set -euxo pipefail
               bash scripts/setup-linux-compat-env.sh
               export PATH="${CARGO_HOME:-$HOME/.cargo}/bin:$PATH"
               mkdir -p dist

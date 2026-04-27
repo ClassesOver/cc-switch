@@ -8,8 +8,28 @@ fi
 
 export DEBIAN_FRONTEND=noninteractive
 
-apt-get update
-apt-get install -y --no-install-recommends \
+apt_retry() {
+  local attempt=1
+  local max_attempts=3
+
+  while true; do
+    if "$@"; then
+      return 0
+    fi
+
+    if [[ "$attempt" -ge "$max_attempts" ]]; then
+      echo "Command failed after ${attempt} attempts: $*" >&2
+      return 1
+    fi
+
+    echo "Command failed (attempt ${attempt}/${max_attempts}): $*" >&2
+    attempt=$((attempt + 1))
+    sleep 5
+  done
+}
+
+apt_retry apt-get update -o Acquire::Retries=3 -o Acquire::ForceIPv4=true
+apt_retry apt-get install -y --no-install-recommends -o Acquire::Retries=3 -o Acquire::ForceIPv4=true \
   ca-certificates \
   curl \
   git \
