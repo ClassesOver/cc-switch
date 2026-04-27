@@ -52,6 +52,7 @@ apt_retry apt-get install -y --no-install-recommends -o Acquire::Retries=3 -o Ac
   libsoup2.4-dev
 
 if [[ "${CC_SWITCH_SKIP_NODE:-0}" != "1" ]]; then
+  node_version="${CC_SWITCH_NODE_VERSION:-20.19.5}"
   node_major=""
   if command -v node >/dev/null 2>&1; then
     node_major="$(node -p "process.versions.node.split('.')[0]")"
@@ -73,14 +74,8 @@ if [[ "${CC_SWITCH_SKIP_NODE:-0}" != "1" ]]; then
 
     node_tmp_dir="$(mktemp -d)"
     trap 'rm -rf "$node_tmp_dir"' EXIT
-    curl -fsSL "https://nodejs.org/dist/latest-v20.x/SHASUMS256.txt" -o "$node_tmp_dir/SHASUMS256.txt"
-    node_archive="$(awk '/linux-'"$node_arch"'\\.tar\\.xz$/ { print $2; exit }' "$node_tmp_dir/SHASUMS256.txt")"
-    if [[ -z "$node_archive" ]]; then
-      echo "Unable to resolve a Node.js 20 archive for linux-$node_arch." >&2
-      exit 1
-    fi
-
-    curl -fsSL "https://nodejs.org/dist/latest-v20.x/$node_archive" -o "$node_tmp_dir/$node_archive"
+    node_archive="node-v${node_version}-linux-${node_arch}.tar.xz"
+    curl -fsSL "https://nodejs.org/dist/v${node_version}/${node_archive}" -o "$node_tmp_dir/$node_archive"
     install -d /usr/local/lib/nodejs
     tar -xJf "$node_tmp_dir/$node_archive" -C /usr/local/lib/nodejs
 
