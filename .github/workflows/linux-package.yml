@@ -45,9 +45,7 @@ jobs:
             -e ARCH="${{ matrix.arch }}" \
             ubuntu:20.04 \
             bash -lc '
-              exec 3>&1
-              exec 1>&2
-              bash scripts/setup-linux-compat-env.sh
+              bash scripts/setup-linux-compat-env.sh >&2
               export PATH="${CARGO_HOME:-$HOME/.cargo}/bin:$PATH"
               cat > /tmp/tauri-ci-linux-package.json <<'"'"'EOF'"'"'
               {
@@ -57,17 +55,17 @@ jobs:
                 }
               }
               EOF
-              pnpm install --frozen-lockfile
-              pnpm tauri build --config /tmp/tauri-ci-linux-package.json --bundles deb
+              pnpm install --frozen-lockfile >&2
+              pnpm tauri build --config /tmp/tauri-ci-linux-package.json --bundles deb >&2
               DEB=$(find /work/src-tauri/target -name "*.deb" | head -1 || true)
               if [ -z "$DEB" ]; then
                 echo "No .deb package found under /work/src-tauri/target" >&2
-                find /work/src-tauri/target -maxdepth 5 -type d | sort || true
-                find /work/src-tauri/target -maxdepth 5 -type f | sort || true
+                (find /work/src-tauri/target -maxdepth 5 -type d | sort) >&2 || true
+                (find /work/src-tauri/target -maxdepth 5 -type f | sort) >&2 || true
                 exit 1
               fi
               chown -R "$HOST_UID:$HOST_GID" /work/src-tauri/target /work/node_modules
-              cat "$DEB" >&3
+              cat "$DEB"
             ' > "$OUTPUT_FILE"
           test -s "$OUTPUT_FILE"
           ls -lh "$OUTPUT_FILE"
