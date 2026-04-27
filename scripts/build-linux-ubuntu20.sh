@@ -23,5 +23,9 @@ docker run --rm \
     export PATH="${CARGO_HOME:-$HOME/.cargo}/bin:$PATH"
     pnpm install --frozen-lockfile
     pnpm tauri build --bundles "$CC_SWITCH_BUNDLES"
-    chown -R "$HOST_UID:$HOST_GID" /work/src-tauri/target /work/node_modules
+    for path in /work/src-tauri/target /work/node_modules; do
+      if [ -e "$path" ]; then
+        chown -R "$HOST_UID:$HOST_GID" "$path"
+      fi
+    done
   '

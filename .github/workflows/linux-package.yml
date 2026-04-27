@@ -36,6 +36,7 @@ jobs:
           OUTPUT_FILE="workflow-artifacts/CC-Switch-${REF_SLUG}-${SHORT_SHA}-Ubuntu20.04-${{ matrix.arch }}.deb"
           docker run --rm \
             -v "$PWD:/work" \
+            -v "$PWD/workflow-artifacts:/artifacts" \
             -w /work \
             -e CI=true \
             -e HOST_UID="$(id -u)" \
@@ -64,9 +65,17 @@ jobs:
                 (find /work/src-tauri/target -maxdepth 5 -type f | sort) >&2 || true
                 exit 1
               fi
-              chown -R "$HOST_UID:$HOST_GID" /work/src-tauri/target /work/node_modules
-              cat "$DEB"
-            ' > "$OUTPUT_FILE"
+              echo "Resolved package: $DEB" >&2
+              ls -lh "$DEB" >&2
+              cp "$DEB" "/artifacts/CC-Switch-${REF_SLUG}-${SHORT_SHA}-Ubuntu20.04-${ARCH}.deb"
+              test -s "/artifacts/CC-Switch-${REF_SLUG}-${SHORT_SHA}-Ubuntu20.04-${ARCH}.deb"
+              ls -lh /artifacts >&2
+              for path in /work/src-tauri/target /work/node_modules; do
+                if [ -e "$path" ]; then
+                  chown -R "$HOST_UID:$HOST_GID" "$path"
+                fi
+              done
+            '
           test -s "$OUTPUT_FILE"
           ls -lh "$OUTPUT_FILE"
 
